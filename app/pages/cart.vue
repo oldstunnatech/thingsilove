@@ -10,7 +10,7 @@
 
       <!-- Empty cart -->
       <div v-if="cartStore.items.length === 0" class="text-center py-32">
-        <p class="text-5xl mb-4">🛸</p>
+        <p class="text-5xl mb-4"></p>
         <p class="uppercase tracking-widest text-sm mb-8" style="color: #7eb8d4;">Your cart is empty</p>
         <NuxtLink
           to="/products"

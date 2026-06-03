@@ -44,7 +44,7 @@
         <div class="flex flex-col justify-center">
           <p class="text-xs uppercase tracking-widest mb-3" style="color: #00d4ff;">{{ product.category }}</p>
           <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">{{ product.name }}</h1>
-          <p class="text-3xl font-bold mb-6" style="color: #00d4ff;">${{ product.price }}</p>
+          <p class="text-3xl font-bold mb-6" style="color: #00d4ff;">₦{{ product.price }}</p>
 
           <p class="text-sm mb-8 leading-relaxed" style="color: #7eb8d4;">
             {{ product.description || 'Premium streetwear piece. Limited stock. Crafted for those who move different.' }}

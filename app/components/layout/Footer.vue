@@ -75,9 +75,10 @@
 const year = new Date().getFullYear()
 
 const socials = [
-  { name: 'Instagram', href: '#', icon: 'i-heroicons-camera' },
-  { name: 'Twitter', href: '#', icon: 'i-heroicons-at-symbol' },
-  { name: 'TikTok', href: '#', icon: 'i-heroicons-musical-note' },
+  { name: 'Facebook', href: '#', icon: 'i-mdi-facebook' },
+  { name: 'Instagram', href: '#', icon: 'i-mdi-instagram' },
+  // { name: 'X', href: '#', icon: 'i-mdi-twitter' },
+  // { name: 'TikTok', href: '#', icon: 'i-mdi-music-note' },
 ]
 
 const shopLinks = [

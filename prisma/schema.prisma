@@ -19,19 +19,30 @@ model User {
 }
 
 model Product {
-  id          String      @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
-  slug        String      @unique
+  slug        String           @unique
   description String?
   price       Float
-  stock       Int         @default(0)
+  stock       Int              @default(0)
   category    String
-  images      String      @default("[]")
-  isNew       Boolean     @default(false)
-  isFeatured  Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  images      String           @default("[]")
+  isNew       Boolean          @default(false)
+  isFeatured  Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   orderItems  OrderItem[]
+  variants    ProductVariant[]
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      String
+  color     String
+  stock     Int     @default(0)
+  sku       String?
 }
 
 model Order {
@@ -53,4 +64,6 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+  size      String?
+  color     String?
 }

@@ -153,7 +153,7 @@
 
           <!-- Empty -->
           <div v-else class="text-center py-24">
-            <p class="text-4xl mb-4">🛸</p>
+            <p class="text-4xl mb-4"></p>
             <p class="uppercase tracking-widest text-sm mb-4" style="color: #7eb8d4;">No products found</p>
             <button
               class="text-xs uppercase tracking-widest font-semibold px-6 py-3 transition-all"
