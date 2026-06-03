@@ -6,9 +6,9 @@
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
 
       <!-- Logo -->
-      <NuxtLink to="/" class="flex flex-col leading-none shrink-0">
-        <span class="text-xl font-black uppercase tracking-tighter text-white">Things</span>
-        <span class="text-xl font-black uppercase tracking-tighter" style="color: #00d4ff;">I Love</span>
+      <NuxtLink to="/" class="flex flex-items-center leading-none shrink-0">
+        <span class="text-xl font-black uppercase tracking-tighter text-white">T</span>
+        <span class="text-xl font-black uppercase tracking-tighter" style="color: #00d4ff;">IL</span>
       </NuxtLink>
 
       <!-- Search bar -->

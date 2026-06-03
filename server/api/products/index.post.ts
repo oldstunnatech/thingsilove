@@ -1,24 +1,21 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
-  const insert = db.prepare(`
-    INSERT INTO Product (id, name, slug, description, price, stock, category, images, isNew, isFeatured, createdAt, updatedAt)
-    VALUES (lower(hex(randomblob(16))), @name, @slug, @description, @price, @stock, @category, @images, @isNew, @isFeatured, datetime('now'), datetime('now'))
-  `)
-
-  insert.run({
-    name: body.name,
-    slug: body.slug,
-    description: body.description || null,
-    price: body.price,
-    stock: body.stock || 0,
-    category: body.category,
-    images: JSON.stringify(body.images || []),
-    isNew: body.isNew ? 1 : 0,
-    isFeatured: body.isFeatured ? 1 : 0,
+  const product = await prisma.product.create({
+    data: {
+      name: body.name,
+      slug: body.slug,
+      description: body.description || null,
+      price: Number(body.price),
+      stock: Number(body.stock) || 0,
+      category: body.category,
+      images: JSON.stringify(body.images || []),
+      isNew: body.isNew || false,
+      isFeatured: body.isFeatured || false,
+    },
   })
 
-  return { success: true }
+  return { success: true, id: product.id }
 })

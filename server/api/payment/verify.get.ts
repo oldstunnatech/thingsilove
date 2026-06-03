@@ -1,4 +1,4 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -24,19 +24,20 @@ export default defineEventHandler(async (event) => {
   const items = JSON.parse(cartItems)
   const total = data.data.amount / 100
 
-  const orderId = crypto.randomUUID().replace(/-/g, '')
-  db.prepare(`
-    INSERT INTO "Order" (id, userId, status, total, createdAt, updatedAt)
-    VALUES (?, ?, 'paid', ?, datetime('now'), datetime('now'))
-  `).run(orderId, userId, total)
+  const order = await prisma.order.create({
+    data: {
+      userId,
+      status: 'paid',
+      total,
+      items: {
+        create: items.map((item: any) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        }))
+      }
+    }
+  })
 
-  for (const item of items) {
-    const itemId = crypto.randomUUID().replace(/-/g, '')
-    db.prepare(`
-      INSERT INTO OrderItem (id, orderId, productId, quantity, price)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(itemId, orderId, item.id, item.quantity, item.price)
-  }
-
-  return { success: true, orderId, total }
+  return { success: true, orderId: order.id, total }
 })

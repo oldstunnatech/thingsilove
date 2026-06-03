@@ -1,14 +1,17 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { verifyToken } from '../../utils/auth'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   const token = getCookie(event, 'auth_token')
   if (!token) return null
 
   const payload = verifyToken(token)
   if (!payload) return null
 
-  const user = db.prepare('SELECT id, name, email, role FROM User WHERE id = ?').get(payload.id) as any
+  const user = await prisma.user.findUnique({
+    where: { id: payload.id },
+    select: { id: true, name: true, email: true, role: true },
+  })
 
   if (!user) return null
 

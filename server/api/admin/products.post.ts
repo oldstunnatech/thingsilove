@@ -1,4 +1,4 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { verifyToken } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
@@ -9,12 +9,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event)
-  const id = crypto.randomUUID().replace(/-/g, '')
 
-  db.prepare(`
-    INSERT INTO Product (id, name, slug, description, price, stock, category, images, isNew, isFeatured, createdAt, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, '[]', ?, ?, datetime('now'), datetime('now'))
-  `).run(id, body.name, body.slug, body.description || null, body.price, body.stock, body.category, body.isNew ? 1 : 0, body.isFeatured ? 1 : 0)
+  const product = await prisma.product.create({
+    data: {
+      name: body.name,
+      slug: body.slug,
+      description: body.description || null,
+      price: Number(body.price),
+      stock: Number(body.stock),
+      category: body.category,
+      isNew: body.isNew || false,
+      isFeatured: body.isFeatured || false,
+    },
+  })
 
-  return { success: true, id }
+  return { success: true, id: product.id }
 })

@@ -1,4 +1,4 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { comparePassword, signToken } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Email and password are required' })
   }
 
-  const user = db.prepare('SELECT * FROM User WHERE email = ?').get(body.email) as any
+  const user = await prisma.user.findUnique({ where: { email: body.email } })
 
   if (!user || !comparePassword(body.password, user.password)) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid email or password' })

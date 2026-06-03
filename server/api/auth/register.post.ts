@@ -1,4 +1,4 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { hashPassword, signToken } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
@@ -8,20 +8,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'All fields are required' })
   }
 
-  const existing = db.prepare('SELECT id FROM User WHERE email = ?').get(body.email)
+  const existing = await prisma.user.findUnique({ where: { email: body.email } })
   if (existing) {
     throw createError({ statusCode: 409, statusMessage: 'Email already registered' })
   }
 
-  const hashedPassword = hashPassword(body.password)
-  const id = crypto.randomUUID().replace(/-/g, '')
+  const user = await prisma.user.create({
+    data: {
+      name: body.name,
+      email: body.email,
+      password: hashPassword(body.password),
+    },
+  })
 
-  db.prepare(`
-    INSERT INTO User (id, name, email, password, role, createdAt, updatedAt)
-    VALUES (?, ?, ?, ?, 'customer', datetime('now'), datetime('now'))
-  `).run(id, body.name, body.email, hashedPassword)
-
-  const token = signToken({ id, email: body.email, role: 'customer' })
+  const token = signToken({ id: user.id, email: user.email, role: user.role })
 
   setCookie(event, 'auth_token', token, {
     httpOnly: true,
@@ -30,5 +30,5 @@ export default defineEventHandler(async (event) => {
     path: '/',
   })
 
-  return { user: { id, name: body.name, email: body.email, role: 'customer' } }
+  return { user: { id: user.id, name: user.name, email: user.email, role: user.role } }
 })

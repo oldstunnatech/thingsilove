@@ -1,6 +1,6 @@
-import { db } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const q = query.q as string || ''
   const category = query.category as string || ''
@@ -9,29 +9,24 @@ export default defineEventHandler((event) => {
   const isNew = query.isNew === 'true'
   const isFeatured = query.isFeatured === 'true'
 
-  let sql = `SELECT * FROM Product WHERE price >= ? AND price <= ?`
-  const params: any[] = [minPrice, maxPrice]
+  const products = await prisma.product.findMany({
+    where: {
+      AND: [
+        q ? {
+          OR: [
+            { name: { contains: q, mode: 'insensitive' } },
+            { description: { contains: q, mode: 'insensitive' } },
+            { category: { contains: q, mode: 'insensitive' } },
+          ]
+        } : {},
+        category ? { category } : {},
+        { price: { gte: minPrice, lte: maxPrice } },
+        isNew ? { isNew: true } : {},
+        isFeatured ? { isFeatured: true } : {},
+      ]
+    },
+    orderBy: { createdAt: 'desc' },
+  })
 
-  if (q) {
-    sql += ` AND (name LIKE ? OR description LIKE ? OR category LIKE ?)`
-    params.push(`%${q}%`, `%${q}%`, `%${q}%`)
-  }
-
-  if (category) {
-    sql += ` AND category = ?`
-    params.push(category)
-  }
-
-  if (isNew) {
-    sql += ` AND isNew = 1`
-  }
-
-  if (isFeatured) {
-    sql += ` AND isFeatured = 1`
-  }
-
-  sql += ` ORDER BY createdAt DESC`
-
-  const products = db.prepare(sql).all(...params)
   return products
 })

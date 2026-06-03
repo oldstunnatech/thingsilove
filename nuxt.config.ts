@@ -20,9 +20,13 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        '@supabase/supabase-js',
         '@vue/devtools-core',
         '@vue/devtools-kit',
       ]
     }
-  }
+  },
+  
+  
+
 })
